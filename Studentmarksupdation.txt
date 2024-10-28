@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+contract StudentManagement {
+
+    // Structure 
+    struct Student {
+        uint256 ID; 
+        string fName;
+        string lName;
+        uint256 marks; 
+    }
+
+
+    // State variables
+    address owner;
+    Student[] public students; // Array
+    uint256 public stdCount; 
+
+
+    // Modifier
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can execute this.");
+        _;
+    }
+
+
+    // Constructor 
+    constructor() {
+        owner = msg.sender;
+    }
+
+
+    // Function to add a new student record
+    function addNewRecord(uint256 _ID, string memory _fName, string memory _lName, uint256 _marks) public onlyOwner {
+        students.push(Student(_ID, _fName, _lName, _marks)); 
+        stdCount++; 
+    }
+
+
+    // Function 
+    function bonusMarks(uint256 _ID, uint256 _bonus) public onlyOwner {
+        require(_ID > 0, "Invalid student ID.");
+        bool found = false;
+        for (uint256 i = 0; i < students.length; i++) {
+            if (students[i].ID == _ID) {
+                students[i].marks += _bonus; 
+                found = true;
+                break;
+            }
+        }
+        require(found, "Student ID not found.");
+    }
+
+
+    // Function 
+    function getStudent(uint256 _ID) public view returns (Student memory) {
+        require(_ID > 0, "Invalid student ID.");
+        for (uint256 i = 0; i < students.length; i++) {
+            if (students[i].ID == _ID) {
+                return students[i]; // Return student details
+            }
+        }
+        revert("Student ID not found.");
+    }
+
+
+    // Fallback function
+    fallback() external payable {
+     }
+
+
+    // Function 
+    receive() external payable {
+        
+    }
+}
